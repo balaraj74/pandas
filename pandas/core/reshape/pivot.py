@@ -10,6 +10,7 @@ from typing import (
 import numpy as np
 
 from pandas._libs import lib
+from pandas.util._decorators import set_module
 
 from pandas.core.dtypes.cast import maybe_downcast_to_dtype
 from pandas.core.dtypes.common import (
@@ -50,6 +51,7 @@ if TYPE_CHECKING:
     from pandas import DataFrame
 
 
+@set_module("pandas")
 def pivot_table(
     data: DataFrame,
     values=None,
@@ -699,6 +701,7 @@ def _convert_by(by):
     return by
 
 
+@set_module("pandas")
 def pivot(
     data: DataFrame,
     *,
@@ -757,9 +760,13 @@ def pivot(
 
     Examples
     --------
-    >>> df = pd.DataFrame({'foo': ['one', 'one', 'two', 'two'],
-    ...                    'bar': ['A', 'B', 'A', 'B'],
-    ...                    'baz': [1, 2, 3, 4]})
+    >>> df = pd.DataFrame(
+    ...     {
+    ...         "foo": ["one", "one", "two", "two"],
+    ...         "bar": ["A", "B", "A", "B"],
+    ...         "baz": [1, 2, 3, 4],
+    ...     }
+    ... )
     >>> df
        foo bar  baz
     0  one   A    1
@@ -767,16 +774,20 @@ def pivot(
     2  two   A    3
     3  two   B    4
 
-    >>> df.pivot(index='foo', columns='bar', values='baz')
+    >>> df.pivot(index="foo", columns="bar", values="baz")
     bar  A  B
     foo
     one  1  2
     two  3  4
 
-    >>> df = pd.DataFrame({'foo': ['one', 'one', 'two', 'two'],
-    ...                    'bar': ['A', 'B', 'A', 'B'],
-    ...                    'baz': [1, 2, 3, 4],
-    ...                    'zoo': ['x', 'y', 'z', 'w']})
+    >>> df = pd.DataFrame(
+    ...     {
+    ...         "foo": ["one", "one", "two", "two"],
+    ...         "bar": ["A", "B", "A", "B"],
+    ...         "baz": [1, 2, 3, 4],
+    ...         "zoo": ["x", "y", "z", "w"],
+    ...     }
+    ... )
     >>> df
        foo bar  baz zoo
     0  one   A    1   x
@@ -784,7 +795,7 @@ def pivot(
     2  two   A    3   z
     3  two   B    4   w
 
-    >>> df.pivot(index='foo', columns='bar')
+    >>> df.pivot(index="foo", columns="bar")
             baz       zoo
     bar       A  B    A  B
     foo
@@ -980,6 +991,7 @@ def pivot(
     return result
 
 
+@set_module("pandas")
 def crosstab(
     index,
     columns,
@@ -1053,22 +1065,63 @@ def crosstab(
 
     Examples
     --------
-    >>> a = np.array(["foo", "foo", "foo", "foo", "bar", "bar",
-    ...               "bar", "bar", "foo", "foo", "foo"], dtype=object)
-    >>> b = np.array(["one", "one", "one", "two", "one", "one",
-    ...               "one", "two", "two", "two", "one"], dtype=object)
-    >>> c = np.array(["dull", "dull", "shiny", "dull", "dull", "shiny",
-    ...               "shiny", "dull", "shiny", "shiny", "shiny"],
-    ...              dtype=object)
-    >>> pd.crosstab(a, [b, c], rownames=['a'], colnames=['b', 'c'])
+    >>> a = np.array(
+    ...     [
+    ...         "foo",
+    ...         "foo",
+    ...         "foo",
+    ...         "foo",
+    ...         "bar",
+    ...         "bar",
+    ...         "bar",
+    ...         "bar",
+    ...         "foo",
+    ...         "foo",
+    ...         "foo",
+    ...     ],
+    ...     dtype=object,
+    ... )
+    >>> b = np.array(
+    ...     [
+    ...         "one",
+    ...         "one",
+    ...         "one",
+    ...         "two",
+    ...         "one",
+    ...         "one",
+    ...         "one",
+    ...         "two",
+    ...         "two",
+    ...         "two",
+    ...         "one",
+    ...     ],
+    ...     dtype=object,
+    ... )
+    >>> c = np.array(
+    ...     [
+    ...         "dull",
+    ...         "dull",
+    ...         "shiny",
+    ...         "dull",
+    ...         "dull",
+    ...         "shiny",
+    ...         "shiny",
+    ...         "dull",
+    ...         "shiny",
+    ...         "shiny",
+    ...         "shiny",
+    ...     ],
+    ...     dtype=object,
+    ... )
+    >>> pd.crosstab(a, [b, c], rownames=["a"], colnames=["b", "c"])
     b    one        two
     c    dull shiny dull shiny
     a
     bar     1     2    1     0
     foo     2     2    1     3
 
-    >>> foo = pd.Categorical(['a', 'b'], categories=['a', 'b', 'c'])
-    >>> bar = pd.Categorical(['d', 'e'], categories=['d', 'e', 'f'])
+    >>> foo = pd.Categorical(["a", "b"], categories=["a", "b", "c"])
+    >>> bar = pd.Categorical(["d", "e"], categories=["d", "e", "f"])
     >>> pd.crosstab(foo, bar)  # Columns will be in category order
          d  e  f
     a    1  0  0

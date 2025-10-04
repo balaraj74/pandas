@@ -146,9 +146,14 @@ class NDArrayBackedExtensionArray(NDArrayBacked, ExtensionArray):
 
             dt64_values = arr.view(dtype)
             return DatetimeArray._simple_new(dt64_values, dtype=dtype)
-        elif isinstance(dtype, ExtensionDtype):
-            raise NotImplementedError(f"view not implemented for {dtype}")
-        return arr.view(dtype=dtype)
+        elif lib.is_np_dtype(dtype, "m") and is_supported_dtype(dtype):
+            from pandas.core.arrays import TimedeltaArray
+
+            td64_values = arr.view(dtype)
+            return TimedeltaArray._simple_new(td64_values, dtype=dtype)
+        # error: Argument "dtype" to "view" of "ndarray" has incompatible type
+        # "ExtensionDtype | dtype[Any]"; expected "dtype[Any] | _HasDType[dtype[Any]]"
+        return arr.view(dtype=dtype)  # type: ignore[arg-type]
 
     def take(
         self,

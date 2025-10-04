@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from pandas.util._decorators import set_module
+
 from pandas.core.dtypes.common import (
     is_iterator,
     is_list_like,
@@ -39,6 +41,7 @@ def ensure_list_vars(arg_vars, variable: str, columns) -> list:
         return []
 
 
+@set_module("pandas")
 def melt(
     frame: DataFrame,
     id_vars=None,
@@ -97,22 +100,26 @@ def melt(
 
     Examples
     --------
-    >>> df = pd.DataFrame({'A': {0: 'a', 1: 'b', 2: 'c'},
-    ...                    'B': {0: 1, 1: 3, 2: 5},
-    ...                    'C': {0: 2, 1: 4, 2: 6}})
+    >>> df = pd.DataFrame(
+    ...     {
+    ...         "A": {0: "a", 1: "b", 2: "c"},
+    ...         "B": {0: 1, 1: 3, 2: 5},
+    ...         "C": {0: 2, 1: 4, 2: 6},
+    ...     }
+    ... )
     >>> df
        A  B  C
     0  a  1  2
     1  b  3  4
     2  c  5  6
 
-    >>> pd.melt(df, id_vars=['A'], value_vars=['B'])
+    >>> pd.melt(df, id_vars=["A"], value_vars=["B"])
        A variable  value
     0  a        B      1
     1  b        B      3
     2  c        B      5
 
-    >>> pd.melt(df, id_vars=['A'], value_vars=['B', 'C'])
+    >>> pd.melt(df, id_vars=["A"], value_vars=["B", "C"])
        A variable  value
     0  a        B      1
     1  b        B      3
@@ -123,7 +130,7 @@ def melt(
 
     The same operation with 'id_vars' not specified:
 
-    >>> pd.melt(df, value_vars=['A', 'B'])
+    >>> pd.melt(df, value_vars=["A", "B"])
     variable value
     0        A     a
     1        A     b
@@ -338,6 +345,7 @@ def melt(
     return result
 
 
+@set_module("pandas")
 def lreshape(data: DataFrame, groups: dict, dropna: bool = True) -> DataFrame:
     """
     Reshape wide-format data to long. Generalized inverse of DataFrame.pivot.
@@ -424,6 +432,7 @@ def lreshape(data: DataFrame, groups: dict, dropna: bool = True) -> DataFrame:
     return data._constructor(mdata, columns=id_cols + pivot_cols)
 
 
+@set_module("pandas")
 def wide_to_long(
     df: DataFrame, stubnames, i, j, sep: str = "", suffix: str = r"\d+"
 ) -> DataFrame:
@@ -483,24 +492,23 @@ def wide_to_long(
 
     Examples
     --------
-    >>> df = pd.DataFrame({
-    ...     'family': ['Miller', 'Smith'],
-    ...     'height_2000': [60, 65],
-    ...     'height_2001': [62, 66],
-    ...     'weight_2000': [150, 165],
-    ...     'weight_2001': [155, 170],
-    ... })
+    >>> df = pd.DataFrame(
+    ...     {
+    ...         "family": ["Miller", "Smith"],
+    ...         "height_2000": [60, 65],
+    ...         "height_2001": [62, 66],
+    ...         "weight_2000": [150, 165],
+    ...         "weight_2001": [155, 170],
+    ...     }
+    ... )
     >>> df
          family  height_2000  height_2001  weight_2000  weight_2001
     0  Miller           60           62          150          155
     1   Smith           65           66          165          170
 
-    >>> pd.wide_to_long(df, 
-    ...                 stubnames=['height', 'weight'], 
-    ...                 i='family', 
-    ...                 j='year')
+    >>> pd.wide_to_long(df, stubnames=["height", "weight"], i="family", j="year")
                       height  weight
-    family year                    
+    family year
     Miller 2000        60    150
            2001        62    155
     Smith  2000        65    165
@@ -508,20 +516,24 @@ def wide_to_long(
 
     Using non-numeric suffixes:
 
-    >>> df = pd.DataFrame({
-    ...     'subject': ['A', 'B'],
-    ...     'height_pre': [60, 65],
-    ...     'height_post': [62, 66],
-    ...     'weight_pre': [150, 165],
-    ...     'weight_post': [155, 170],
-    ... })
-    >>> pd.wide_to_long(df,
-    ...                 stubnames=['height', 'weight'],
-    ...                 i='subject',
-    ...                 j='time',
-    ...                 suffix='(pre|post)')
+    >>> df = pd.DataFrame(
+    ...     {
+    ...         "subject": ["A", "B"],
+    ...         "height_pre": [60, 65],
+    ...         "height_post": [62, 66],
+    ...         "weight_pre": [150, 165],
+    ...         "weight_post": [155, 170],
+    ...     }
+    ... )
+    >>> pd.wide_to_long(
+    ...     df,
+    ...     stubnames=["height", "weight"],
+    ...     i="subject",
+    ...     j="time",
+    ...     suffix="(pre|post)",
+    ... )
                        height  weight
-    subject time                    
+    subject time
     A       pre         60    150
             post        62    155
     B       pre         65    165

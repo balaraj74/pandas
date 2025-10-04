@@ -108,19 +108,19 @@ def get_dummies(
     Notes
     -----
     * Dummy variables are commonly used in statistical models and machine
-      learning to convert categorical data into a format suitable for 
+      learning to convert categorical data into a format suitable for
       numerical processing.
     * The `drop_first` option is useful for avoiding the "dummy variable trap"
-      where perfectly correlated dummy variables can cause problems in 
+      where perfectly correlated dummy variables can cause problems in
       regression models.
-    * For sparse matrices, using `sparse=True` can significantly reduce 
+    * For sparse matrices, using `sparse=True` can significantly reduce
       memory usage when data has many zeros.
 
     Examples
     --------
     Basic usage for a single column:
 
-    >>> s = pd.Series(list('abca'))
+    >>> s = pd.Series(list("abca"))
     >>> pd.get_dummies(s)
        a  b  c
     0  1  0  0
@@ -130,7 +130,7 @@ def get_dummies(
 
     With NaN values:
 
-    >>> s = pd.Series(list('abcaa'))
+    >>> s = pd.Series(list("abcaa"))
     >>> s.loc[3] = np.nan
     >>> pd.get_dummies(s, dummy_na=True)
        a  b  c  NaN
@@ -152,12 +152,8 @@ def get_dummies(
 
     With DataFrame input and custom prefixes:
 
-    >>> df = pd.DataFrame({
-    ...     'A': ['a', 'b', 'a'],
-    ...     'B': ['b', 'a', 'c'],
-    ...     'C': [1, 2, 3]
-    ... })
-    >>> pd.get_dummies(df, prefix=['col1', 'col2'])
+    >>> df = pd.DataFrame({"A": ["a", "b", "a"], "B": ["b", "a", "c"], "C": [1, 2, 3]})
+    >>> pd.get_dummies(df, prefix=["col1", "col2"])
        C  col1_a  col1_b  col2_a  col2_b  col2_c
     0  1       1       0       0       1       0
     1  2       0       1       1       0       0
@@ -423,7 +419,7 @@ def _get_dummies_1d(
 
         if drop_first:
             # remove first GH12042
-            dummy_mat = dummy_mat[:, 1:]  # type: ignore[assignment]
+            dummy_mat = dummy_mat[:, 1:]
             dummy_cols = dummy_cols[1:]
         return DataFrame(dummy_mat, index=index, columns=dummy_cols, dtype=_dtype)
 
@@ -485,13 +481,15 @@ def from_dummies(
     --------
     Convert dummy columns back to a single categorical column:
 
-    >>> df = pd.DataFrame({
-    ...     'color_red': [1, 0, 0],
-    ...     'color_blue': [0, 1, 0],
-    ...     'color_green': [0, 0, 1],
-    ...     'size': [1, 2, 3]
-    ... })
-    >>> pd.from_dummies(df, sep='_')
+    >>> df = pd.DataFrame(
+    ...     {
+    ...         "color_red": [1, 0, 0],
+    ...         "color_blue": [0, 1, 0],
+    ...         "color_green": [0, 0, 1],
+    ...         "size": [1, 2, 3],
+    ...     }
+    ... )
+    >>> pd.from_dummies(df, sep="_")
        size   color
     0     1     red
     1     2    blue
@@ -499,12 +497,14 @@ def from_dummies(
 
     With a default category for rows of all zeros:
 
-    >>> df = pd.DataFrame({
-    ...     'color_red': [1, 0, 0, 0],
-    ...     'color_blue': [0, 1, 0, 0],
-    ...     'color_green': [0, 0, 1, 0]
-    ... })
-    >>> pd.from_dummies(df, sep='_', default_category='unknown')
+    >>> df = pd.DataFrame(
+    ...     {
+    ...         "color_red": [1, 0, 0, 0],
+    ...         "color_blue": [0, 1, 0, 0],
+    ...         "color_green": [0, 0, 1, 0],
+    ...     }
+    ... )
+    >>> pd.from_dummies(df, sep="_", default_category="unknown")
          color
     0      red
     1     blue
@@ -513,14 +513,16 @@ def from_dummies(
 
     With different defaults for different variables:
 
-    >>> df = pd.DataFrame({
-    ...     'color_red': [1, 0, 0],
-    ...     'color_blue': [0, 0, 0],
-    ...     'size_S': [0, 1, 0],
-    ...     'size_M': [0, 0, 0]
-    ... })
-    >>> defaults = {'color': 'unknown', 'size': 'L'}
-    >>> pd.from_dummies(df, sep='_', default_category=defaults)
+    >>> df = pd.DataFrame(
+    ...     {
+    ...         "color_red": [1, 0, 0],
+    ...         "color_blue": [0, 0, 0],
+    ...         "size_S": [0, 1, 0],
+    ...         "size_M": [0, 0, 0],
+    ...     }
+    ... )
+    >>> defaults = {"color": "unknown", "size": "L"}
+    >>> pd.from_dummies(df, sep="_", default_category=defaults)
          color size
     0      red    L
     1  unknown    S
